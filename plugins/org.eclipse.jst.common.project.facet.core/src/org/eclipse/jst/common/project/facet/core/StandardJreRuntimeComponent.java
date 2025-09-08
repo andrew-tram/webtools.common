@@ -10,7 +10,7 @@
  *    Carl Anderson - Java 9 support
  *    John Collier - Java 10-11, 13-15 support
  *    Leon Keuroglian - Java 12 support
- *    Nitin Dahyabhai - Java 16-24 support
+ *    Nitin Dahyabhai - Java 16-26 declarations
  ******************************************************************************/
 
 package org.eclipse.jst.common.project.facet.core;
@@ -55,6 +55,8 @@ public final class StandardJreRuntimeComponent
     public static final IRuntimeComponentVersion VERSION_22 = TYPE.getVersion( "22" ); //$NON-NLS-1$
     public static final IRuntimeComponentVersion VERSION_23 = TYPE.getVersion( "23" ); //$NON-NLS-1$
     public static final IRuntimeComponentVersion VERSION_24 = TYPE.getVersion( "24" ); //$NON-NLS-1$
+    public static final IRuntimeComponentVersion VERSION_25 = TYPE.getVersion( "25" ); //$NON-NLS-1$
+    public static final IRuntimeComponentVersion VERSION_26 = TYPE.getVersion( "26" ); //$NON-NLS-1$
 
     @Deprecated
     public static final IRuntimeComponentVersion VERSION_5_0 = VERSION_1_5;
@@ -98,6 +100,14 @@ public final class StandardJreRuntimeComponent
         else if( jvmver.startsWith( "1.8" ) ) //$NON-NLS-1$
         {
         	rcv = StandardJreRuntimeComponent.VERSION_1_8;
+        }
+        else if( jvmver.startsWith( "26" ) ) //$NON-NLS-1$
+        {
+            rcv = StandardJreRuntimeComponent.VERSION_26;
+        }
+        else if( jvmver.startsWith( "25" ) ) //$NON-NLS-1$
+        {
+            rcv = StandardJreRuntimeComponent.VERSION_25;
         }
         else if( jvmver.startsWith( "24" ) ) //$NON-NLS-1$
         {
