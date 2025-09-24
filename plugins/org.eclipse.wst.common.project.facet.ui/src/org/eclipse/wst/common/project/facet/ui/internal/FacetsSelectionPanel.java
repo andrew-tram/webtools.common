@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (c) 2010, 2014 Oracle and Others
+ * Copyright (c) 2010, 2025 Oracle and Others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,11 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerEditor;
+import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
+import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.FocusCellOwnerDrawHighlighter;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -60,6 +64,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.jface.viewers.TreeViewerEditor;
+import org.eclipse.jface.viewers.TreeViewerFocusCellManager;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.ToolTip;
@@ -236,7 +242,8 @@ public final class FacetsSelectionPanel
         this.sform2 = new SashForm( this.sform1, SWT.HORIZONTAL | SWT.SMOOTH );
         this.sform2.setLayoutData( gdhspan( gdfill(), 4 ) );
         
-        this.treeViewer = new CheckboxTreeViewer( this.sform2, SWT.BORDER );
+        this.treeViewer = new CheckboxTreeViewer( this.sform2, SWT.BORDER | SWT.FULL_SELECTION );
+
         this.tree = this.treeViewer.getTree();
         
         this.tree.setHeaderVisible( true );
@@ -256,6 +263,31 @@ public final class FacetsSelectionPanel
         this.colVersion.setLabelProvider( new FacetVersionColumnLabelProvider() );
         this.colVersion.setEditingSupport( new FacetVersionColumnEditingSupport( this.treeViewer ) );
         this.colVersion.getColumn().setWidth( computeDefaultVersionColumnWidth() );
+
+        TreeViewerFocusCellManager focusMgr =
+        	    new TreeViewerFocusCellManager(this.treeViewer, new FocusCellOwnerDrawHighlighter(this.treeViewer));
+
+        	ColumnViewerEditorActivationStrategy actStrategy =
+        	    new ColumnViewerEditorActivationStrategy(this.treeViewer) {
+        	        @Override
+        	        protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent e) {
+        	            int t = e.eventType;
+        	            return t == ColumnViewerEditorActivationEvent.TRAVERSAL
+        	                || t == ColumnViewerEditorActivationEvent.MOUSE_CLICK_SELECTION
+        	                || t == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION
+        	                || t == ColumnViewerEditorActivationEvent.PROGRAMMATIC
+        	                || t == ColumnViewerEditorActivationEvent.KEY_PRESSED;
+        	        }
+        	    };
+
+        	TreeViewerEditor.create(
+        	    this.treeViewer,
+        	    focusMgr,
+        	    actStrategy,
+        	    ColumnViewerEditor.TABBING_HORIZONTAL
+        	        | ColumnViewerEditor.TABBING_VERTICAL
+        	        | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
+        	        | ColumnViewerEditor.KEYBOARD_ACTIVATION);
         
         this.popupMenu = new Menu( getShell(), SWT.POP_UP );
         
